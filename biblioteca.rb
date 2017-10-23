@@ -2,34 +2,53 @@ require "rubygems"
 require "highline/import"
 
 classeLivros = Class.new do
-  attr_reader :autor, :titulo, :cod
+  attr_reader :autor, :titulo
 
-  define_method (:livro) do
+  def initialize(autor, titulo)
     @autor = autor
     @titulo = titulo
-    @cod = cod
+  end
+
+  def ==(other)
+    self.class === other and
+        other.autor == @autor and
+        other.titulo == @titulo
+  end
+
+  alias eql? ==
+
+  def hash
+    @autor.hash ^ @titulo.hash # XOR
   end
 end
 
-livro_classe = classeLivros.new
+livro_classe = classeLivros.new 'autor','titulo'
 
 classeBiblioteca = Class.new  do
   attr_accessor :livros
 
   define_method (:adic_livro) do
-    puts "adiciona livro"
+    puts "Nome do autor"
+    autor = gets.chomp
+    puts "Título do livro"
+    titulo = gets.chomp
+
+    livro_classe
   end
 
   define_method (:remove_livro) do
     puts "remove livro"
+    puts
   end
 
   define_method (:retorna_livros) do
     puts "retorna livros"
+    puts
   end
 
   define_method (:retorna_biblioteca) do
-    puts "quantidade de livros na biblitoeca  1"
+    puts "quantidade de livros na biblitoeca"
+    puts
   end
 end
 

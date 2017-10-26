@@ -1,70 +1,80 @@
-require "rubygems"
-require "highline/import"
-
-classeLivros = Class.new do
-  attr_reader :autor, :titulo
-
-  def initialize(autor, titulo)
-    @autor = autor
-    @titulo = titulo
-  end
-
-  def ==(other)
-    self.class === other and
-        other.autor == @autor and
-        other.titulo == @titulo
-  end
-
-  alias eql? ==
-
-  def hash
-    @autor.hash ^ @titulo.hash # XOR
-  end
+class Livro
+  attr_accessor :autor, :titulo, :cod
 end
 
-livro_classe = classeLivros.new 'autor','titulo'
-
-classeBiblioteca = Class.new  do
+class Biblioteca
   attr_accessor :livros
 
-  define_method (:adic_livro) do
-    puts "Nome do autor"
-    autor = gets.chomp
-    puts "Título do livro"
-    titulo = gets.chomp
-
-    livro_classe
+  def initialize
+    @livros = {}
   end
-
-  define_method (:remove_livro) do
-    puts "remove livro"
+  
+  def adiciona(livro)
+    @livros[livro.cod] = livro
+    puts
+    puts "O título #{livro.titulo.chomp} foi adicionado"
     puts
   end
-
-  define_method (:retorna_livros) do
-    puts "retorna livros"
+  
+  def remove(cod)
+    @livros.delete(cod)
     puts
+    puts "O livro    foi removido"
   end
-
-  define_method (:retorna_biblioteca) do
-    puts "quantidade de livros na biblitoeca"
+  
+  def listar
+    @livros.each_value do |livro|
+      puts
+      puts "código: #{livro.cod}"
+      puts "título: #{livro.titulo}"
+      puts "autor: #{livro.autor}"
+      puts
+    end
+  end
+  def quantidade
     puts
+    puts "Quantidade de livros da biblioteca:"
+    puts @livros.length
   end
 end
 
-classe_biblioteca = classeBiblioteca.new
+classe_biblioteca = Biblioteca.new
 
+sair = false
 
-begin
-  puts
-  loop do
-    choose do |menu|
-      menu.prompt = "O que deseja fazer? [1, 2, 3, 4, 5]"
-      menu.choice(:Adicionar_Livro) {classe_biblioteca.adic_livro}
-      menu.choice(:Remover_Livro) {classe_biblioteca.remove_livro}
-      menu.choice(:Listar_Livros) {classe_biblioteca.retorna_livros}
-      menu.choice(:Biblioteca_Tamanho) {classe_biblioteca.retorna_biblioteca}
-      menu.choice(:Sair, "Sair do programa") { exit }
-    end
+while sair != true
+  puts "O que deseja fazer? [1, 2, 3, 4, 5]"
+  puts "[1]adicionar livro"
+  puts "[2]remover livro"
+  puts "[3]mostrar todos os livros"
+  puts "[4]mostrar quantidade de livros"
+  puts "[5]sair do programa"
+  
+  opcao = gets.to_i
+  
+  if opcao == 1
+    livro = Livro.new
+    puts "Título do livro"
+    livro.titulo = gets.to_s
+    puts "Nome do autor"
+    livro.autor = gets.to_s
+    puts "Código do livro"
+    livro.cod = gets.to_i
+    classe_biblioteca.adiciona(livro)
+    
+  elsif opcao == 2
+    puts "Digite o código do livro a ser removido"
+    cod = gets.to_i
+    classe_biblioteca.remove(cod)
+    puts
+  elsif opcao == 3
+    puts "Esses são os livros da biblioteca3"
+    classe_biblioteca.listar
+    puts
+  elsif opcao == 4
+    classe_biblioteca.quantidade
+    puts
+  elsif opcao == 5
+    sair = true
   end
 end
